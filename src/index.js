@@ -1,17 +1,81 @@
-import React from 'react';
+import React, { useState} from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import "./index.css"
+
+const AddTask = ({addTask}) =>{
+  const[value,updatevalue] = useState('');
+const handleSubmit = e => {
+  e.preventDefault();
+  if(value!=="")
+  {
+    addTask(value)
+    updatevalue("");
+  }
+}
+return(
+<form onSubmit={handleSubmit}>
+  <input type="text" value={value}
+  placeholder="Enter your task todo"
+  onChange={e=>updatevalue(e.target.value)}/>
+  <button type="submit" class="material-icon">add</button>
+  </form>
+
+)
+};
+
+const TodoList = () =>{
+  const addTask = text => updateTask([...tasks,{text}]);
+  const[tasks,updateTask] = useState([
+  {
+    text:"Wake Up",
+    isCompleted:false
+  },
+  {
+    text:"Fresh Up",
+    isCompleted:false
+  },
+  {
+    text:"Boost Up",
+    isCompleted:false
+  }
+  ]);
+
+  const toggleTask = index =>{
+    const newTask =[...tasks];
+    if(newTask[index].isCompleted)
+    {
+      newTask[index].isCompleted=false;
+    }
+    else {
+      newTask[index].isCompleted=true;
+    }
+    updateTask(newTask)
+  }
+
+  const removeTask= index =>{
+    const newTask = [...tasks];
+    newTask.splice(index,1);
+    updateTask(newTask);
+  }
+
+  return(
+    <div className="list-of-tasks-todo">
+      {tasks.map((task,index) =>(
+        <div className="task-status">
+          <span onClick={()=>toggleTask(index)}
+          className={task.isCompleted?"task-name completed-task":"task-name"}>
+          {index}
+          {task.text}
+          </span>
+          <button onClick={() => removeTask(index)}><i class="material-icons">delete</i></button>   
+        </div>
+      ))}
+      <AddTask addTask={addTask}/>
+    </div>
+  );
+}
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+  <TodoList/>,
+  document.getElementById("root")
+)
